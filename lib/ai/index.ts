@@ -3,6 +3,7 @@ import { experimental_wrapLanguageModel as wrapLanguageModel } from 'ai';
 import { openrouter } from '@openrouter/ai-sdk-provider';
 import { togetherai } from '@ai-sdk/togetherai';
 import { deepseek } from '@ai-sdk/deepseek';
+import { google } from '@ai-sdk/google';
 
 import { customMiddleware } from "./custom-middleware";
 // Type definition for valid reasoning models used for research and structured outputs
@@ -50,6 +51,13 @@ function getReasoningModel(modelId: string) {
 }
 
 export const customModel = (apiIdentifier: string, forReasoning: boolean = false) => {
+  if (process.env.GOOGLE_GENERATIVE_AI_API_KEY && process.env.GOOGLE_GENERATIVE_AI_API_KEY !== "****") {
+    return wrapLanguageModel({
+      model: google(forReasoning ? "gemini-2.0-pro-exp-02-05" : "gemini-2.0-flash"),
+      middleware: customMiddleware,
+    });
+  }
+
   // Check which API key is available
   const hasOpenRouterKey = process.env.OPENROUTER_API_KEY && process.env.OPENROUTER_API_KEY !== "****";
 
